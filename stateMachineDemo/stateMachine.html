@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<link href='http://fonts.googleapis.com/css?family=Permanent+Marker|Cabin+Sketch' rel='stylesheet' type='text/css'>
+<script>
+
+  var states = [];
+
+  function Transition(text, nextState){
+    this.text = text;
+    this.nextState = nextState;
+  }
+
+  function State(id, image, alt, transitions){
+    this.id = 1;
+    this.image = image;
+    this.alt = alt;
+    this.transitions = transitions;
+  }
+
+  function addDecision(text, nextState) {
+    //Create an input type dynamically.   
+    var element = document.createElement("input");
+    //Assign different attributes to the element. 
+    element.type = "button";
+    element.value = text;
+    element.name = "objectName";  
+    element.onclick = function() { 
+        updateState(nextState);
+    };
+    element.style.margin = "2em";
+    element.style.paddingLeft = "1em";
+    element.style.paddingRight = "1em";
+    element.style.color = "#FFFFF0";
+    element.style.backgroundColor = "#0F0F0F";
+    element.style.boxShadow = "3px 3px 5px #000000";
+    element.style.border= "none";
+    element.style.fontFamily = "Permanent Marker";
+    element.style.fontSize = "1em";
+    
+    //// rotated label effect
+    //var rotMax = 2;
+    //var rotMin = -2;
+    //var randomRotation = Math.random() * (rotMax - rotMin + 1) + rotMin;
+    //element.style.webkitTransform = "rotate("+randomRotation+"deg)";  
+	  //element.style.mozTransform = "rotate("+randomRotation+"deg)"; 
+	  //element.style.transform = "rotate("+randomRotation+"deg)";
+
+    var dForm = document.getElementById("decisionForm");
+    //Append the element in page 
+    dForm.appendChild(element);
+  }
+  
+  function addRollDecision(text, nextState, defaultstate, probability) {
+    //Create an input type dynamically.   
+    var element = document.createElement("input");
+    //Assign different attributes to the element. 
+    element.type = "button";
+    element.value = text;
+    element.name = "objectName";  
+    element.onclick = function() { 
+      if (Math.random() < probability)
+        updateState(nextState);
+      else
+        updateState(defaultstate);
+    };
+    element.style.margin = "2em";
+    element.style.paddingLeft = "1em";
+    element.style.paddingRight = "1em";
+    element.style.color = "#0F0F0F";
+    element.style.backgroundColor = "#FFFFF0";
+    element.style.boxShadow = "3px 3px 5px #000000";
+    element.style.border= "none";
+    element.style.fontFamily = "Permanent Marker";
+    element.style.fontSize = "1em";
+    
+    //// rotated label effect
+    //var rotMax = 2;
+    //var rotMin = -2;
+    //var randomRotation = Math.random() * (rotMax - rotMin + 1) + rotMin;
+    //element.style.webkitTransform = "rotate("+randomRotation+"deg)";  
+	  //element.style.mozTransform = "rotate("+randomRotation+"deg)"; 
+	  //element.style.transform = "rotate("+randomRotation+"deg)";
+
+    var dForm = document.getElementById("decisionForm");
+    //Append the element in page 
+    dForm.appendChild(element);
+  }
+  
+  function clearDecisions(){
+    var el = document.getElementById("decisionForm");
+    while (el.firstChild){
+      el.removeChild(el.firstChild);
+    }
+  }
+  
+  function updateState(nextState) {
+  
+    clearDecisions();
+    
+    addRollDecision("toss coin for first option vs reset", 1, states[nextState].transitions[0].nextState, 0.5);
+    
+    // add the new transitions
+    for (var i=0; i < states[nextState].transitions.length; i++){
+      t = states[nextState].transitions[i];
+      addDecision(t.text, t.nextState);
+    }
+    
+    // update the picture
+    var img = document.getElementById("gamepanel");
+    img.alt = states[nextState].alt;
+    img.title = states[nextState].alt;
+    img.src = "img/"+states[nextState].image;
+    
+    //// rotate the pic
+    //var rotMax = 2; 
+    //var rotMin = -2;
+    //var randomRotation = Math.random() * (rotMax - rotMin + 1) + rotMin;
+    //img.style.webkitTransform = "rotate("+randomRotation+"deg)";  
+	  //img.style.mozTransform = "rotate("+randomRotation+"deg)"; 
+	  //img.style.transform = "rotate("+randomRotation+"deg)";
+    
+  }
+  
+  function init(){
+    var t1 = [new Transition("Hey", 2)];
+    states[1] = new State(1, "1.png", "A thing happen", t1);
+      
+    var t2 = [new Transition("Say Hello", 3), new Transition("Stab yer Friend", 4)];
+    states[2] = new State(2, "2.png", "A new thing happen!!!", t2);
+      
+    var t3 = [new Transition("Great!", 5)];
+    states[3] = new State(3, "3.png", "many happens!", t3);
+    
+    var t4 = [new Transition("Garbhhbl", 6)];
+    states[4] = new State(4, "4.png", "many happens!!!", t4);
+    
+    var t5 = [new Transition("uh", 7)];
+    states[5] = new State(5, "5or6.png", "many happens!!!!1!", t5);
+    
+    var t6 = [new Transition("uh", 9)];
+    states[6] = new State(6, "5or6.png", "many happens!!!!!!!!!!!1!", t6);
+    
+    var t7 = [new Transition("Nosiree, no stabbin here.", 8)];
+    states[7] = new State(7, "7.png", "many happens!!!1111!!1!aaaaa", t7);
+    
+    var t8 = [new Transition("Start over", 1)];
+    states[8] = new State(8, "8.png", "many happens!!!!!!!!!!!!!!!!!!!!!1!AAAAARRAAA", t8);
+    
+    var t9 = [new Transition("Stab yer friend!", 4), new Transition("Play it cool.", 7)];
+    states[9] = new State(9, "9.png", "many happens!!!!!!!!!!!!!!!!!!!!!1!AAAAARRAAAAAAAAAAAARHA", t9);
+    
+    updateState(1);
+  }
+  
+
+</script>
+
+<body style="background-image: url('img/denim.png');color:#FFFFF0;text-align: center ; font-family: 'Permanent Marker', cursive;  letter-spacing: 3px;font-weight: normal;font-size:1.5em;" onload="init();">
+
+<h1> <span id="greeting" style="color:#FFFFF0;background-color:#0F0F0F;box-shadow: 3px 3px 5px #000000;font-family: 'Cabin Sketch', cursive; font-weight: bold; font-size:2em;"> &nbsp;StabGame: The Game! &nbsp; </span> </h1>
+
+<img id="gamepanel" style="padding:10px;padding-bottom:20px;color:#EFEFEF;background-color:#FFFFF0;box-shadow: 5px 5px 10px #000000; " src="img/1.png" alt="game image panel" width="25%" height="25%" >
+
+
+</br>
+<div id="decisionDiv">
+<form id="decisionForm">
+</form>
+</div>
+
+</body>
+</html>
